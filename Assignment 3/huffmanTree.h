@@ -1,3 +1,4 @@
+// Optional file to implement an OOP solution for the Huffman Tree
 // Program is retrieved from assignment 1.
 #include <iostream>
 #include <fstream>
@@ -9,7 +10,6 @@
 #include <string>
 
 using namespace std;
-
 //define Huffman Tree
 //Huffman tree node is define by its character, frequency, left node, right node, left edge, and right edge
 struct HuffmanTreeNode
@@ -20,7 +20,7 @@ struct HuffmanTreeNode
     HuffmanTreeNode* left;
     HuffmanTreeNode* right;
     string labelLeft;
-    string labelRigth;
+    string labelRight;
     
     //initialize the Node 
     HuffmanTreeNode (char ch, int freq, string labelLeft, string labelRigth, int nodeCounter)
@@ -28,7 +28,7 @@ struct HuffmanTreeNode
         character=ch;
         frequency=freq;
         left=right=NULL;
-        labelRigth="";
+        labelRight="";
         labelLeft="";
         counter=nodeCounter;
     }
@@ -99,41 +99,30 @@ HuffmanTreeNode* buildHuffmanTree(priority_queue<HuffmanTreeNode*, vector<Huffma
 }
 
 //helper function to traverse tree to print binary code and store value in arr
-void traverse(HuffmanTreeNode* root, int arr[], int pos)
-{
-    //left traverse is 0, using recursion to achieve value
-    if (root->left)
-    {
+/* traverses a Huffman Tree to find the binary code of a target character. It starts at the root node and navigates down the
+tree, building the binary code as it goes. When it finds the target character, it prints the symbol, frequency, and code.*/
+void traverse(HuffmanTreeNode* root, char target, int arr[], int pos) {
+    // If there's a left child, add a 0 to the binary code and continue traversing on the left branch
+    if (root->left) {
         arr[pos] = 0;
-        traverse(root->left, arr, pos+1);
+        traverse(root->left, target, arr, pos + 1);
     }
-    
-    //right traverse is 1, using recursion to achieve value
-    if (root->right)
-    {
-        arr[pos]=1;
-        traverse(root->right,arr, pos+1);
-    }
-    
-    //print chararacter and its code when we reach leaf node
-    if (!root->left && !root->right)
-        {
-            //print binary code
-            std::cout<<"Symbol: "<<root->character<<", Frequency: "<<root->frequency<<", Code: ";
-            for (int i=0; i<pos; i++)
-            {
-                cout<<arr[i];
-            }
-            std::cout<<std::endl;
-        }
-}
 
-//print result from generating HuffmanTree
-void encode(HuffmanTreeNode* root)
-{
-    //traverse huffman tree and print result. Initiate empty array to store result
-    int arr[100], position=0;
-    traverse(root,arr,position);
+    // If there's a right child, add a 1 to the binary code and continue traversing on the right branch
+    if (root->right) {
+        arr[pos] = 1;
+        traverse(root->right, target, arr, pos + 1);
+    }
+
+    // If the current node is a leaf (no left or right children) and its character matches the target character
+    if (!root->left && !root->right && root->character == target) {
+        // Print the symbol, frequency, and binary code for the target character
+        cout << "Symbol: " << root->character << ", Frequency: " << root->frequency << ", Code: ";
+        for (int i = 0; i < pos; i++) {
+            cout << arr[i];
+        }
+        cout << endl;
+    }
 }
 
 //Helper function to traverse the Huffman tree and determine the character
